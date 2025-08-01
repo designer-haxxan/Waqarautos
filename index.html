@@ -125,7 +125,7 @@
           locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
         });
 
-        const buffer = await fetch("IMS.db").then(res => res.arrayBuffer());
+        const buffer = await fetch("ims.db?v=" + new Date().getTime()).then(res => res.arrayBuffer());
         db = new SQL.Database(new Uint8Array(buffer));
 
         await loadData();
@@ -217,4 +217,5 @@
   </script>
 </body>
 </html>
+
 
