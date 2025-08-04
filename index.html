@@ -193,7 +193,7 @@
 
       let sql = `SELECT * FROM short_rpt `;
       if (query) {
-        sql += `WHERE Contact LIKE '%${query}%' OR EngineNo LIKE '%${query}%' `;
+        sql += `WHERE Trim(ifnull(Name,'')) LIKE '%${query}%' OR Contact LIKE '%${query}%' OR EngineNo LIKE '%${query}%' `;
       }
       sql += `LIMIT 100`;
 
@@ -270,3 +270,4 @@
   </script>
 </body>
 </html>
+
