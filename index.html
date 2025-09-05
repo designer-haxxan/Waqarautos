@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -32,7 +33,7 @@
       border-radius: 10px;
       border: 1px solid #ccc;
       font-size: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       transition: border-color 0.3s;
     }
 
@@ -51,10 +52,11 @@
       background: white;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px 10px;
       border-bottom: 1px solid #eee;
       font-size: 15px;
@@ -91,9 +93,11 @@
 
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
       display: none;
       justify-content: center;
       align-items: center;
@@ -108,7 +112,7 @@
       max-width: 600px;
       max-height: 85vh;
       overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
       position: relative;
       animation: fadeIn 0.3s ease;
     }
@@ -130,12 +134,21 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     @media (max-width: 600px) {
-      th, td {
+
+      th,
+      td {
         font-size: 14px;
         padding: 10px 8px;
       }
@@ -151,6 +164,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -158,6 +172,16 @@
   </header>
 
   <div id="tableContainer">Loading...</div>
+
+
+  <!-- Condition Detail Modal -->
+  <div id="ConditiondetailModal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-btn" onclick="ConditioncloseModal()">×</span>
+      <h2 class="modal-title">🧾 Ledger Details</h2>
+      <div id="ConditionmodalTableContainer"></div>
+    </div>
+  </div>
 
   <!-- Detail Modal -->
   <div id="detailModal" class="modal-overlay">
@@ -218,6 +242,7 @@
             if (i !== 0) html += `<td>${cell}</td>`;
           });
           html += `<td><button onclick="showDetail('${row[0]}')">View</button></td>`;
+          html += `<td><button onclick="showCondition('${row[0]}')">Condition</button></td>`;
           html += "</tr>";
         });
 
@@ -264,10 +289,51 @@
       }
     }
 
+
+    function showCondition(id) {
+      if (!db) return;
+
+      try {
+        const res = db.exec(`SELECT * FROM tblshort WHERE ID = '${id}'`);
+        if (!res.length) {
+          alert("❌ No Condition entry found.");
+          return;
+        }
+
+        const { columns, values } = res[0];
+        const hiddenIndex = columns.indexOf("ID");
+
+        let html = "<table><thead><tr>";
+        columns.forEach((col, i) => {
+          if (i !== hiddenIndex) html += `<th>${col}</th>`;
+        });
+        html += "</tr></thead><tbody>";
+
+        values.forEach(row => {
+          html += "<tr>";
+          row.forEach((cell, i) => {
+            if (i !== hiddenIndex) html += `<td>${cell}</td>`;
+          });
+          html += "</tr>";
+        });
+
+        html += "</tbody></table>";
+
+        document.getElementById("ConditionmodalTableContainer").innerHTML = html;
+        document.getElementById("ConditiondetailModal").style.display = "flex";
+      } catch (e) {
+        alert("❌ Error loading detail: " + e.message);
+      }
+    }
+
+    function ConditioncloseModal() {
+      document.getElementById("ConditiondetailModal").style.display = "none";
+    }
+
     function closeModal() {
       document.getElementById("detailModal").style.display = "none";
     }
   </script>
 </body>
-</html>
 
+</html>
